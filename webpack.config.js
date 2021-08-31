@@ -1,55 +1,62 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const entryPath = ".";
 
 module.exports = {
-    entry: './src/app.ts',
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: "index.html",
-            minify: {
-                minifyCSS: true,
-                minifyJS: true
-            }
-        })
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: "ts-loader",
-                exclude: /node_modules/,
-            },
-            {
-                test: /\.m?js$/,
-                exclude: /(node_modules)/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ["@babel/preset-env"]
-                    }
-                }
-            },
-            {
-                test: /\.s[ac]ss$/i,
-                use: ["style-loader", "css-loader", "sass-loader"]
-            },
-            {
-                test: /\.(png|jpg|jpeg|gif)$/i,
-                type: "asset"
-            },
-            {
-                test: /\.(svg)$/i,
-                type: "asset/source"
-            }
+  entry: `./${entryPath}/app/app.ts`,
+  output: {
+    filename: "out.js",
+    path: path.resolve(__dirname, `${entryPath}/build`)
+  },
+  devServer: {
+    contentBase: path.join(__dirname, `${entryPath}`),
+    publicPath: "/build/",
+    compress: true,
+    port: 3001,
+    historyApiFallback: true
+  },
+  plugins: [
+    new MiniCssExtractPlugin()
+  ],
+  module: {
+    rules: [
+      // {
+      //   test: /\.js$/,
+      //   exclude: /node_modules/,
+      //   loader: "babel-loader"
+      // },
+
+
+      {
+        test: /\.ts$/,
+        include: [path.resolve(__dirname, 'app')],
+        use: 'ts-loader',
+      },
+      
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          }
         ]
-    },
-    resolve: {
-        extensions: [".tsx", ".ts", ".js"]
-    },
-    output: {
-        filename: "[name].bundle.js",
-        path: path.resolve(__dirname, "dist"),
-        assetModuleFilename: 'assets/[hash][ext][query]',
-        clean: true
-    }
-}
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: true
+            },
+          },
+          'css-loader',
+          'sass-loader'
+        ],
+      },
+    ]
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+};
