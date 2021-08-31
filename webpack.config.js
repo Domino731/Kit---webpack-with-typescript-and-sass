@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const entryPath = ".";
 
 module.exports = {
-  entry: `./${entryPath}/app/app.ts`,
+  entry: `./${entryPath}/app/index.ts`,
   output: {
     filename: "out.js",
     path: path.resolve(__dirname, `${entryPath}/build`)
@@ -20,19 +20,11 @@ module.exports = {
   ],
   module: {
     rules: [
-      // {
-      //   test: /\.js$/,
-      //   exclude: /node_modules/,
-      //   loader: "babel-loader"
-      // },
-
-
       {
         test: /\.ts$/,
-        include: [path.resolve(__dirname, 'app')],
-        use: 'ts-loader',
+        exclude: /node_modules/,
+        loader: "babel-loader"
       },
-      
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
@@ -55,8 +47,5 @@ module.exports = {
         ],
       },
     ]
-  },
-  resolve: {
-    extensions: ['.ts', '.js'],
-  },
+  }
 };

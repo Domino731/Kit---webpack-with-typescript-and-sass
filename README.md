@@ -1,4 +1,6 @@
-# Webpack with  TypeScript & Sass
+# Developer starter kit
+## With Webpack, TypeScript & Sass.
 
-## To run dev mode use `npm start`
-## To run build move use `npm build`
+### Scripts
+* Developer mode - `npm start`
+* Build mode - `npm build`

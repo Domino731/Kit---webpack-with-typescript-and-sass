@@ -1,1 +1,0 @@
-console.log("GTA VC is so much better than SA");
