@@ -1,30 +1,29 @@
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const entryPath = ".";
+const mode = process.env.NODE_ENV || "development";
+const target = process.env.NODE_ENV === "production" ? "browserslist" : "web";
 
 module.exports = {
-  entry: `./${entryPath}/app/index.ts`,
-  output: {
-    filename: "out.js",
-    path: path.resolve(__dirname, `${entryPath}/build`)
+  mode: mode,
+  stats: {
+    children: false,
   },
-  devServer: {
-    contentBase: path.join(__dirname, `${entryPath}`),
-    publicPath: "/build/",
-    compress: true,
-    port: 3001,
-    historyApiFallback: true
+  entry: {
+    index: `./src/index.ts`
   },
-  plugins: [
-    new MiniCssExtractPlugin()
-  ],
+  plugins: [new MiniCssExtractPlugin()],
+
   module: {
     rules: [
+      // typescript compilation into common js
       {
         test: /\.ts$/,
         exclude: /node_modules/,
-        loader: "babel-loader"
+        use: {
+          loader: "ts-loader",
+        },
       },
+      // file loader for images
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
@@ -33,19 +32,28 @@ module.exports = {
           }
         ]
       },
+      // sass compiler
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.(s[ac]|c)ss$/i,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: true
-            },
-          },
-          'css-loader',
-          'sass-loader'
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+          "sass-loader",
         ],
       },
-    ]
-  }
+    ],
+  },
+  target: target,
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+ // devtool: "source-map",
+  devServer: {
+    contentBase: path.join(__dirname),
+    publicPath: "/build/",
+    compress: true,
+    port: 3001,
+    historyApiFallback: true,
+  },
 };
